@@ -1,0 +1,12 @@
+# How often (in ticks; 20 ticks = 1 second) to recompute the nearest cave
+# and re-point every Cave Compass a player is carrying.
+update-interval-ticks: 40
+
+# How far (in blocks, per axis) to search for a cave around each player.
+# Larger values can find more distant caves but cost more to search when
+# no cave is nearby (worst case is a full cube scan out to this radius).
+search-radius: 48
+
+# Only search chunks that are already loaded, instead of forcing new ones
+# to load just to check them for cave air.
+only-loaded-chunks: true

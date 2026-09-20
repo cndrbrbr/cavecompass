@@ -1,0 +1,12 @@
+name: CaveCompass
+version: 0.1.0
+main: de.cndrbrbr.cavecompass.CaveCompass
+api-version: '26.3'
+
+description: Gives a compass that always points to the nearest cave, even underground and out of sight.
+author: cndrbrbr
+
+commands:
+  cavecompass:
+    description: Get a compass that points to the nearest cave.
+    usage: /cavecompass
