@@ -8,12 +8,22 @@
 
     <groupId>de.cndrbrbr</groupId>
     <artifactId>CaveCompass</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
+        <!-- Our own bytecode target stays fixed and broadly compatible across
+             Minecraft versions: a newer JDK can always cross-compile down to
+             an older release target, so this does not need to vary between
+             the profiles below even though building against the 26.1 API
+             requires a JDK new enough to read its classfiles (25+). -->
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
+
+        <!-- Default target: Minecraft/Spigot 1.21.11. Override with profile mc-26.1 -->
+        <spigot.version>1.21.11-R0.1-SNAPSHOT</spigot.version>
+        <plugin.api-version>1.21</plugin.api-version>
+        <mc.classifier>mc1.21.11</mc.classifier>
     </properties>
 
     <repositories>
@@ -23,12 +33,23 @@
         </repository>
     </repositories>
 
+    <profiles>
+        <profile>
+            <id>mc-26.1</id>
+            <properties>
+                <spigot.version>26.1-R0.1-SNAPSHOT</spigot.version>
+                <plugin.api-version>26.1</plugin.api-version>
+                <mc.classifier>mc26.1</mc.classifier>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>26.3-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -42,6 +63,15 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}-${project.version}-${mc.classifier}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
 
             <plugin>

@@ -20,22 +20,36 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
+          # 25+ is required to read the 26.1 profile's spigot-api classfiles
+          # at compile time; our own output still targets release 21 (see
+          # pom.xml) so both jars run on an older server JVM just fine.
           java-version: '25'
           cache: maven
 
-      - name: Build with Maven
+      - name: Build for Minecraft 1.21.11
         run: mvn clean package
 
-      - name: Upload plugin jar
+      - name: Stage 1.21.11 jar
+        run: |
+          mkdir -p dist
+          cp target/CaveCompass-*-mc1.21.11.jar dist/
+
+      - name: Build for Minecraft 26.1
+        run: mvn clean package -P mc-26.1
+
+      - name: Stage 26.1 jar
+        run: cp target/CaveCompass-*-mc26.1.jar dist/
+
+      - name: Upload plugin jars
         uses: actions/upload-artifact@v4
         with:
           name: cavecompass
-          path: target/*.jar
+          path: dist/*.jar
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: target/CaveCompass-*.jar
+          files: dist/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
