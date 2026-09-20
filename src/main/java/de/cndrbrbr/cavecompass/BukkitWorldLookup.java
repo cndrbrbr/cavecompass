@@ -18,6 +18,12 @@ public final class BukkitWorldLookup implements BlockLookup {
     }
 
     @Override
+    public boolean isAirLike(int x, int y, int z) {
+        Material type = world.getBlockAt(x, y, z).getType();
+        return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
+    }
+
+    @Override
     public boolean isChunkLoaded(int chunkX, int chunkZ) {
         return world.isChunkLoaded(chunkX, chunkZ);
     }

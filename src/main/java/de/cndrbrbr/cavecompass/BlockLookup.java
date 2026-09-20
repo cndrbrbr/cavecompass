@@ -9,6 +9,9 @@ public interface BlockLookup {
 
     boolean isCaveAir(int x, int y, int z);
 
+    /** True for any non-solid "empty space" block (air, cave air, void air). */
+    boolean isAirLike(int x, int y, int z);
+
     boolean isChunkLoaded(int chunkX, int chunkZ);
 
     int minHeight();

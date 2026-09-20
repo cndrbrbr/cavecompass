@@ -2,50 +2,11 @@ package de.cndrbrbr.cavecompass;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CaveFinderTest {
-
-    /**
-     * A fake world: every coordinate is loaded and within height limits by
-     * default, and "cave air" exists only at the coordinates explicitly
-     * added.
-     */
-    private static final class FakeWorld implements BlockLookup {
-        private final Set<Long> caveAir = new HashSet<>();
-
-        void addCave(int x, int y, int z) {
-            caveAir.add(key(x, y, z));
-        }
-
-        private static long key(int x, int y, int z) {
-            return (((long) x & 0x1FFFFF) << 42) | (((long) y & 0x1FFFFF) << 21) | ((long) z & 0x1FFFFF);
-        }
-
-        @Override
-        public boolean isCaveAir(int x, int y, int z) {
-            return caveAir.contains(key(x, y, z));
-        }
-
-        @Override
-        public boolean isChunkLoaded(int chunkX, int chunkZ) {
-            return true;
-        }
-
-        @Override
-        public int minHeight() {
-            return -64;
-        }
-
-        @Override
-        public int maxHeight() {
-            return 320;
-        }
-    }
 
     @Test
     void findsNothingWhenNoCaveInRange() {
@@ -57,7 +18,7 @@ class CaveFinderTest {
     @Test
     void findsAnAdjacentCave() {
         FakeWorld world = new FakeWorld();
-        world.addCave(1, 0, 0);
+        world.addCaveAir(1, 0, 0);
         Optional<CaveFinder.Result> result = CaveFinder.findNearestCave(world, 0, 0, 0, 8, true);
         assertTrue(result.isPresent());
         assertEquals(1, result.get().x());
@@ -77,8 +38,8 @@ class CaveFinderTest {
     @Test
     void prefersTrueEuclideanNearestOverEarlierShellHit() {
         FakeWorld world = new FakeWorld();
-        world.addCave(3, 3, 3);
-        world.addCave(4, 0, 0);
+        world.addCaveAir(3, 3, 3);
+        world.addCaveAir(4, 0, 0);
 
         Optional<CaveFinder.Result> result = CaveFinder.findNearestCave(world, 0, 0, 0, 8, true);
 
@@ -92,7 +53,7 @@ class CaveFinderTest {
     @Test
     void respectsHeightLimits() {
         FakeWorld world = new FakeWorld();
-        world.addCave(0, -70, 0); // below minHeight(-64)
+        world.addCaveAir(0, -70, 0); // below minHeight(-64)
         Optional<CaveFinder.Result> result = CaveFinder.findNearestCave(world, 0, -60, 0, 16, true);
         assertTrue(result.isEmpty());
     }
@@ -103,6 +64,11 @@ class CaveFinderTest {
             @Override
             public boolean isCaveAir(int x, int y, int z) {
                 return x == 5 && y == 0 && z == 0;
+            }
+
+            @Override
+            public boolean isAirLike(int x, int y, int z) {
+                return isCaveAir(x, y, z);
             }
 
             @Override
@@ -128,7 +94,7 @@ class CaveFinderTest {
     @Test
     void doesNotSearchBeyondRadius() {
         FakeWorld world = new FakeWorld();
-        world.addCave(100, 0, 0);
+        world.addCaveAir(100, 0, 0);
         Optional<CaveFinder.Result> result = CaveFinder.findNearestCave(world, 0, 0, 0, 8, true);
         assertTrue(result.isEmpty());
     }

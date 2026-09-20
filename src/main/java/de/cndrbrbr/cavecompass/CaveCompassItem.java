@@ -29,10 +29,7 @@ public final class CaveCompassItem {
         CompassMeta meta = (CompassMeta) item.getItemMeta();
 
         meta.setDisplayName("§bCave Compass");
-        meta.setLore(List.of(
-                "§7Points toward the nearest cave.",
-                "§7Works underground, even out of sight."
-        ));
+        meta.setLore(lore("§7Calculating..."));
         meta.setLodestoneTracked(false);
         meta.getPersistentDataContainer().set(markerKey, PersistentDataType.BYTE, (byte) 1);
 
@@ -47,10 +44,27 @@ public final class CaveCompassItem {
         return item.getItemMeta().getPersistentDataContainer().has(markerKey, PersistentDataType.BYTE);
     }
 
-    public static void pointAt(ItemStack item, Location target) {
+    /**
+     * Points the compass at the target's horizontal direction (via the
+     * needle) and, since a needle alone cannot show altitude, also updates
+     * the item's lore with a vertical hint — together giving full 3D
+     * guidance to a cave the player can't see or hear.
+     *
+     * @param deltaY target Y minus player Y (positive = target is above)
+     */
+    public static void pointAt(ItemStack item, Location target, int deltaY) {
         CompassMeta meta = (CompassMeta) item.getItemMeta();
         meta.setLodestoneTracked(false);
         meta.setLodestone(target);
+        meta.setLore(lore(VerticalHint.describe(deltaY)));
         item.setItemMeta(meta);
+    }
+
+    private static List<String> lore(String verticalLine) {
+        return List.of(
+                "§7Points toward the nearest cave.",
+                "§7Works underground, even out of sight.",
+                verticalLine
+        );
     }
 }

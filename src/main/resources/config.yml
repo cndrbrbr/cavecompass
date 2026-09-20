@@ -10,3 +10,16 @@ search-radius: 48
 # Only search chunks that are already loaded, instead of forcing new ones
 # to load just to check them for cave air.
 only-loaded-chunks: true
+
+# How "big"/airy a cave needs to be to count. A cave-air block only
+# qualifies as a target if at least this many of the open (air or cave
+# air) blocks in the cube around it (see openness-check-radius) are also
+# open — this filters out thin crevices and single-block pockets in
+# favour of real caverns. Lower this if the compass struggles to find
+# anything within search-radius; raise it to hold out for bigger caves.
+min-open-blocks: 20
+
+# Half-width of the cube checked around each candidate cave-air block
+# when judging its "openness" above. 2 means a 5x5x5 cube (124 other
+# blocks checked, excluding the candidate itself).
+openness-check-radius: 2

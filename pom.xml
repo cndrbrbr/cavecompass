@@ -8,7 +8,7 @@
 
     <groupId>de.cndrbrbr</groupId>
     <artifactId>CaveCompass</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
 
     <properties>
         <!-- Our own bytecode target stays fixed and broadly compatible across
