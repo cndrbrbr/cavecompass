@@ -1,5 +1,10 @@
 name: Build CaveCompass
 
+# Branch pushes and PRs build both jars as workflow artifacts.
+# Each Minecraft version gets its own GitHub Release, triggered by a tag of the
+# form v<version>-mc<minecraft>, e.g. v0.10.1-mc1.21.11 or v0.10.1-mc26.3.
+# Such a tag builds and publishes only the jar for that Minecraft version.
+
 on:
   push:
   pull_request:
@@ -20,25 +25,34 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          # 25+ is required to read the 26.1 profile's spigot-api classfiles
+          # 25+ is required to read the 26.3 profile's spigot-api classfiles
           # at compile time; our own output still targets release 21 (see
           # pom.xml) so both jars run on an older server JVM just fine.
           java-version: '25'
           cache: maven
 
-      - name: Build for Minecraft 1.21.11
-        run: mvn clean package
+      - name: Select Minecraft versions to build
+        id: select
+        run: |
+          if [[ "$GITHUB_REF" =~ ^refs/tags/v[^-]+-mc(.+)$ ]]; then
+            echo "versions=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+            echo "mc=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "versions=1.21.11 26.3" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Stage 1.21.11 jar
+      - name: Build
         run: |
           mkdir -p dist
-          cp target/CaveCompass-*-mc1.21.11.jar dist/
-
-      - name: Build for Minecraft 26.1
-        run: mvn clean package -P mc-26.1
-
-      - name: Stage 26.1 jar
-        run: cp target/CaveCompass-*-mc26.1.jar dist/
+          for mc in ${{ steps.select.outputs.versions }}; do
+            case "$mc" in
+              1.21.11) profile="" ;;
+              26.3)    profile="-P mc-26.3" ;;
+              *) echo "Unknown Minecraft version: $mc"; exit 1 ;;
+            esac
+            mvn -B clean package $profile
+            cp target/CaveCompass-*-mc$mc.jar dist/
+          done
 
       - name: Upload plugin jars
         uses: actions/upload-artifact@v4
@@ -47,9 +61,10 @@ jobs:
           path: dist/*.jar
 
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: steps.select.outputs.mc != ''
         uses: softprops/action-gh-release@v2
         with:
+          name: ${{ github.ref_name }} (Minecraft ${{ steps.select.outputs.mc }})
           files: dist/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

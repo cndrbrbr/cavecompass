@@ -76,19 +76,20 @@ nothing is found within the radius the tooltip says so.
 
 ```
 mvn clean package                  # default: Minecraft/Spigot 1.21.11
-mvn clean package -P mc-26.1       # Minecraft/Spigot 26.1
+mvn clean package -P mc-26.3       # Minecraft/Spigot 26.3
 ```
 
 Two Maven profiles are available since the plugin's own code has no
 version-specific dependencies — only the `spigot-api` version and the
 `plugin.yml` `api-version` differ between them (see `pom.xml`). Each
-produces a differently-named jar in `target/`. Building the `mc-26.1`
+produces a differently-named jar in `target/`. Building the `mc-26.3`
 profile needs a JDK new enough to read its classfiles (25+); the plugin's
 own compiled output still targets release 21 either way, so both jars run
 fine on an older server JVM.
 
-CI builds both profiles and attaches both jars directly to the GitHub
-Release for every pushed `v*` tag.
+CI builds both profiles on every push. Each Minecraft version gets its own
+GitHub Release: a tag `v<version>-mc<minecraft>` (e.g. `v0.10.1-mc26.3`)
+builds and publishes only the jar for that version.
 
 ## Tests
 

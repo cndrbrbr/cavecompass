@@ -8,19 +8,19 @@
 
     <groupId>de.cndrbrbr</groupId>
     <artifactId>CaveCompass</artifactId>
-    <version>0.10.0</version>
+    <version>0.10.1</version>
 
     <properties>
         <!-- Our own bytecode target stays fixed and broadly compatible across
              Minecraft versions: a newer JDK can always cross-compile down to
              an older release target, so this does not need to vary between
-             the profiles below even though building against the 26.1 API
+             the profiles below even though building against the 26.3 API
              requires a JDK new enough to read its classfiles (25+). -->
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
 
-        <!-- Default target: Minecraft/Spigot 1.21.11. Override with profile mc-26.1 -->
+        <!-- Default target: Minecraft/Spigot 1.21.11. Override with profile mc-26.3 -->
         <spigot.version>1.21.11-R0.1-SNAPSHOT</spigot.version>
         <plugin.api-version>1.21</plugin.api-version>
         <mc.classifier>mc1.21.11</mc.classifier>
@@ -35,11 +35,11 @@
 
     <profiles>
         <profile>
-            <id>mc-26.1</id>
+            <id>mc-26.3</id>
             <properties>
-                <spigot.version>26.1-R0.1-SNAPSHOT</spigot.version>
-                <plugin.api-version>26.1</plugin.api-version>
-                <mc.classifier>mc26.1</mc.classifier>
+                <spigot.version>26.3-R0.1-SNAPSHOT</spigot.version>
+                <plugin.api-version>26.3</plugin.api-version>
+                <mc.classifier>mc26.3</mc.classifier>
             </properties>
         </profile>
     </profiles>
