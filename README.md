@@ -1,4 +1,8 @@
-# cavecompass
+<p align="center">
+  <img src="logo.svg" width="128" height="128" alt="CaveCompass logo">
+</p>
+
+<h1 align="center">cavecompass</h1>
 
 A Spigot plugin that gives you a compass which always points toward the
 nearest big, open cave — even underground, even if you can't see it.
@@ -18,6 +22,12 @@ with the needle.
 
 Instead of caves, a compass can also be set to look for any block type —
 for example a group of bee nests — with its own search radius.
+
+## Screenshots
+
+| The compass in hand | Tooltip with vertical hint |
+|---|---|
+| ![Cave Compass held in the hand](compass1.png) | ![Cave Compass tooltip showing "30 blocks down"](compass2.png) |
 
 ## Usage
 
