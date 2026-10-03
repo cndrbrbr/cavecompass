@@ -3,10 +3,10 @@ version: '${project.version}'
 main: de.cndrbrbr.cavecompass.CaveCompass
 api-version: '${plugin.api-version}'
 
-description: Gives a compass that always points to the nearest cave, even underground and out of sight.
+description: Gives a compass that always points to the nearest cave (or a configurable block cluster), even underground and out of sight.
 author: cndrbrbr
 
 commands:
   cavecompass:
-    description: Get a compass that points to the nearest cave.
-    usage: /cavecompass
+    description: Get or configure a compass that points to the nearest cave or block cluster.
+    usage: /cavecompass [cave|<block>] [radius] [count]

@@ -3,7 +3,8 @@ package de.cndrbrbr.cavecompass;
 import java.util.Optional;
 
 /**
- * Finds the nearest cave-air block to a given point.
+ * Finds the nearest block matching a {@link BlockMatcher} (by default: cave
+ * air) to a given point.
  *
  * Searches in expanding cubic "shells" (Chebyshev-distance rings) around the
  * origin so that, in the common case where a cave is nearby, only a small
@@ -27,6 +28,17 @@ public final class CaveFinder {
 
     public static Optional<Result> findNearestCave(
             BlockLookup lookup,
+            int originX,
+            int originY,
+            int originZ,
+            int radius,
+            boolean onlyLoadedChunks) {
+        return findNearest(lookup, lookup::isCaveAir, originX, originY, originZ, radius, onlyLoadedChunks);
+    }
+
+    public static Optional<Result> findNearest(
+            BlockLookup lookup,
+            BlockMatcher matcher,
             int originX,
             int originY,
             int originZ,
@@ -60,7 +72,7 @@ public final class CaveFinder {
                             continue;
                         }
 
-                        if (!lookup.isCaveAir(x, y, z)) {
+                        if (!matcher.matches(x, y, z)) {
                             continue;
                         }
 

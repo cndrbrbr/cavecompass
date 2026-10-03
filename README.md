@@ -16,6 +16,9 @@ can't indicate "up" or "down". So the item's tooltip also shows a live
 vertical hint (e.g. "▼ 14 blocks down"), giving full 3D guidance together
 with the needle.
 
+Instead of caves, a compass can also be set to look for any block type —
+for example a group of bee nests — with its own search radius.
+
 ## Usage
 
 ```
@@ -26,15 +29,38 @@ Gives you a Cave Compass. It updates automatically — needle and vertical
 hint both — while you carry it anywhere in your inventory, including the
 offhand; no need to re-request it.
 
+```
+/cavecompass [cave|<block>] [radius] [count]
+```
+
+| Example | Searches for |
+|---|---|
+| `/cavecompass` | the nearest open cave, default radius (`search-radius`) |
+| `/cavecompass cave 96` | the nearest open cave within 96 blocks |
+| `/cavecompass bee_nest 64` | a group of at least `default-cluster-size` (3) bee nests within 64 blocks |
+| `/cavecompass bee_nest 100 2` | a group of at least 2 bee nests within 100 blocks |
+| `/cavecompass diamond_ore 32 1` | the nearest single diamond ore within 32 blocks |
+
+`<block>` is any Minecraft block id (tab completion lists them). A
+"group" means at least `count` blocks of that type inside the cube of
+half-width `cluster-check-radius` around the target. If you hold a compass
+from this plugin in your main hand, the command reconfigures that compass;
+otherwise you get a new one. Each compass remembers its own settings, so you
+can carry a cave compass and a bee-nest compass at the same time. When
+nothing is found within the radius the tooltip says so.
+
 ## Configuration (`config.yml`)
 
 | Key | Default | Meaning |
 |---|---|---|
 | `update-interval-ticks` | `40` | How often (in ticks; 20 = 1s) to recompute the nearest cave and re-point compasses. |
-| `search-radius` | `48` | How far, in blocks per axis, to search around each player. |
+| `search-radius` | `48` | Default search radius, in blocks per axis, around each player (overridable per compass via the command). |
+| `max-search-radius` | `128` | Largest radius players may choose with the command. |
 | `only-loaded-chunks` | `true` | Skip chunks that aren't already loaded, instead of forcing them to load. |
 | `min-open-blocks` | `20` | How "big"/airy a cave needs to be to count — a candidate needs at least this many open blocks around it (see below). Lower this if the compass struggles to find anything within `search-radius`. |
 | `openness-check-radius` | `2` | Half-width of the cube checked around each candidate when judging its openness above (2 = 5x5x5, 124 neighbours checked). |
+| `cluster-check-radius` | `8` | Block search: half-width of the cube in which `count` matching blocks must lie to form a group. |
+| `default-cluster-size` | `3` | Block search: `count` used when the command doesn't give one. |
 
 ## Building
 
@@ -60,6 +86,6 @@ Release for every pushed `v*` tag.
 mvn test
 ```
 
-The cave-finding geometry, the openness filter, and the vertical-hint
-formatting are all covered by plain unit tests with no Bukkit server
+The cave-finding geometry, the openness filter, the block-cluster filter,
+command argument parsing and the vertical-hint formatting are all covered by plain unit tests with no Bukkit server
 needed (`BlockLookup` abstracts the world away for this purpose).

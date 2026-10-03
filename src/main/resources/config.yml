@@ -2,10 +2,14 @@
 # and re-point every Cave Compass a player is carrying.
 update-interval-ticks: 40
 
-# How far (in blocks, per axis) to search for a cave around each player.
-# Larger values can find more distant caves but cost more to search when
-# no cave is nearby (worst case is a full cube scan out to this radius).
+# Default search radius (in blocks, per axis) around each player. Can be
+# overridden per compass with /cavecompass <target> <radius>.
+# Larger values can find more distant targets but cost more to search when
+# nothing is nearby (worst case is a full cube scan out to this radius).
 search-radius: 48
+
+# Upper limit for the radius players may choose with the command.
+max-search-radius: 128
 
 # Only search chunks that are already loaded, instead of forcing new ones
 # to load just to check them for cave air.
@@ -23,3 +27,11 @@ min-open-blocks: 20
 # when judging its "openness" above. 2 means a 5x5x5 cube (124 other
 # blocks checked, excluding the candidate itself).
 openness-check-radius: 2
+
+# Block search (/cavecompass <block> [radius] [count]): a block only counts
+# if at least <count> blocks of that type lie within the cube of this
+# half-width around it — e.g. a group of bee nests instead of a single one.
+cluster-check-radius: 8
+
+# <count> used when the command doesn't specify one.
+default-cluster-size: 3
